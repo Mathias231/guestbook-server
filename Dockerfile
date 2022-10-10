@@ -2,8 +2,8 @@ FROM node:18
 
 ENV PORT 3000
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+RUN mkdir -p /usr/src/server/app
+WORKDIR /usr/src/server/app
 
 COPY package*.json .
 
