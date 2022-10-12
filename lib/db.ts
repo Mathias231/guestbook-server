@@ -1,6 +1,7 @@
 import mongoose, { Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 import userModel, { IUser } from '../models/user.model';
+import postModel, { IPost } from '../models/post.model';
 
 if (typeof process.env.MONGO_URI === 'undefined') {
   throw new Error('Envirement Variable MONGO_URI is not set');
@@ -43,7 +44,7 @@ export const updateUser = async (
   if (User === null) {
     throw new Error('User not found');
   }
-  if (username) User.username = username; // TODO: Add option to only change username or password
+  if (username) User.username = username;
   if (password) User.password = await bcrypt.hash(password, 10);
   let dbReq = await User.save();
   return dbReq;
@@ -60,5 +61,45 @@ export const deleteUser = async (id: string): Promise<IUser> => {
 };
 
 // Create Post
+export const createPost = async ({
+  userId,
+  title,
+  content,
+}: {
+  userId: string;
+  title: string;
+  content: string;
+}): Promise<IPost> => {
+  let db = await connect();
+
+  const createPost = new postModel({ userId, title, content });
+  let dbReq = await createPost.save();
+  return dbReq;
+};
+
+export const updatePost = async (
+  id: string,
+  { title, content }: { title: string; content: string },
+): Promise<IPost> => {
+  let db = await connect();
+  let Post = await postModel.findById(id);
+  if (Post === null) {
+    throw new Error('Post not found');
+  }
+
+  if (title) Post.title = title;
+  if (content) Post.content = content;
+  let dbReq = await Post.save();
+  return dbReq;
+};
+
+export const deletePost = async (id: string): Promise<IPost> => {
+  let db = await connect();
+  let Post = await postModel.findByIdAndDelete(id);
+  if (Post === null) {
+    throw new Error('User not found');
+  }
+  return Post;
+};
 
 export default connect;
