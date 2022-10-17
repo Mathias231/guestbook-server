@@ -2,6 +2,7 @@ import mongoose, { Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 import userModel, { IUser } from '../models/user.model';
 import postModel, { IPost } from '../models/post.model';
+import commentModel, { IComment } from '../models/comment.model';
 
 if (typeof process.env.MONGO_URI === 'undefined') {
   throw new Error('Envirement Variable MONGO_URI is not set');
@@ -77,6 +78,7 @@ export const createPost = async ({
   return dbReq;
 };
 
+// Update Post
 export const updatePost = async (
   id: string,
   { title, content }: { title: string; content: string },
@@ -93,13 +95,33 @@ export const updatePost = async (
   return dbReq;
 };
 
+// Delete Post
 export const deletePost = async (id: string): Promise<IPost> => {
   let db = await connect();
   let Post = await postModel.findByIdAndDelete(id);
   if (Post === null) {
-    throw new Error('User not found');
+    throw new Error('Post not found');
   }
   return Post;
+};
+
+// Create comment
+export const createComment = async ({
+  userId,
+  postId,
+  title,
+  content,
+}: {
+  userId: string;
+  postId: string;
+  title: string;
+  content: string;
+}): Promise<IComment> => {
+  let db = await connect();
+
+  const createComment = new commentModel({ userId, postId, title, content });
+  let dbReq = await createComment.save();
+  return dbReq;
 };
 
 export default connect;
