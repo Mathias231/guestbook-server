@@ -124,4 +124,31 @@ export const createComment = async ({
   return dbReq;
 };
 
+export const updateComment = async (
+  commentId: string,
+  { title, content }: { title: string; content: string },
+): Promise<IComment> => {
+  let db = await connect();
+  const Comment = await commentModel.findById(commentId);
+
+  if (Comment === null) {
+    throw new Error('Comment not found');
+  }
+
+  if (title) Comment.title = title;
+  if (content) Comment.content = content;
+
+  let dbReq = await Comment.save();
+  return dbReq;
+};
+
+export const deleteComment = async (id: string): Promise<IComment> => {
+  let db = await connect();
+  const Comment = await commentModel.findByIdAndDelete(id);
+  if (Comment === null) {
+    throw new Error('Comment not found');
+  }
+  return Comment;
+};
+
 export default connect;

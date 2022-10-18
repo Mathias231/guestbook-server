@@ -4,8 +4,10 @@ import connect, {
   createComment,
   createPost,
   createUser,
+  deleteComment,
   deletePost,
   deleteUser,
+  updateComment,
   updatePost,
   updateUser,
 } from '../db';
@@ -143,27 +145,102 @@ describe('Comment creation', () => {
 
   // Craete Comment
   it('Should create a comment to a post', async () => {
+    // First create User
     let user = createUser({
       username: uuidv4(),
       password: 'DeleteMeFromComment',
     });
     let resolvedUser = await user;
+
+    // Then create Post
     let post = createPost({
       userId: resolvedUser._id.toString(),
-      title: 'Test Title',
+      title: 'DeleteMeFromCreatePost',
       content: 'Comment Post test',
     });
-
     let resolvedPost = await post;
 
+    // Then create Comment to post
     let comment = await createComment({
       userId: resolvedUser._id.toString(),
       postId: resolvedPost._id.toString(),
-      title: 'This is a test comment!',
-      content: 'Wow i worked!',
+      title: 'DeleteMeFromCreateComment',
+      content: 'Wow it worked!',
     });
     expect(comment).toHaveProperty('title');
     expect(comment).toHaveProperty('content');
     return;
+  });
+
+  // Update Comment
+  it('Should update a post with title and content', async () => {
+    // First create User
+    let user = createUser({
+      username: uuidv4(),
+      password: 'DeleteMeFromComment',
+    });
+    let resolvedUser = await user;
+
+    // Then create Post
+    let post = createPost({
+      userId: resolvedUser._id.toString(),
+      title: 'DeleteMeFromUpdateComment',
+      content: 'Comment Post test',
+    });
+    let resolvedPost = await post;
+
+    // Then create Comment to post
+    let comment = await createComment({
+      userId: resolvedUser._id.toString(),
+      postId: resolvedPost._id.toString(),
+      title: 'DeleteMeFromCreateComment',
+      content: 'Wow it worked!',
+    });
+    let resolvedComment = await comment;
+
+    // Then update Comment
+    let updateCom = await updateComment(resolvedComment._id.toString(), {
+      title: 'DeleteMeFromUpdateComment!',
+      content: 'Kommentaren ble endret!!',
+    });
+    expect(updateCom).toHaveProperty('title');
+    expect(updateCom).toHaveProperty('content');
+    return;
+  });
+
+  // Delete Comment
+  it('Should delete comment by id', async () => {
+    // First create User
+    let user = createUser({
+      username: uuidv4(),
+      password: 'DeleteMeFromDeleteComment',
+    });
+    let resolvedUser = await user;
+
+    // Then create Post
+    let post = createPost({
+      userId: resolvedUser._id.toString(),
+      title: 'DeleteMeFromDeleteComment',
+      content: 'Comment Post test',
+    });
+    let resolvedPost = await post;
+
+    // Then create Comment to post
+    let comment = await createComment({
+      userId: resolvedUser._id.toString(),
+      postId: resolvedPost._id.toString(),
+      title: 'DeleteMeFromDeleteComment',
+      content: 'Wow it worked!',
+    });
+    let resolvedComment = await comment;
+
+    let deleteCom = await deleteComment(resolvedComment._id.toString());
+    expect(deleteCom).toHaveProperty('title');
+    expect(deleteCom).toHaveProperty('content');
+    return;
+  });
+  afterAll((done) => {
+    mongoose.connection.close();
+    done();
   });
 });
