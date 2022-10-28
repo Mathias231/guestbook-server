@@ -105,7 +105,7 @@ export const deletePost = async (id: string): Promise<IPost> => {
   return Post;
 };
 
-// Create comment
+// Create Comment
 export const createComment = async ({
   userId,
   postId,
@@ -124,6 +124,7 @@ export const createComment = async ({
   return dbReq;
 };
 
+// Update Comment
 export const updateComment = async (
   commentId: string,
   { title, content }: { title: string; content: string },
@@ -142,6 +143,7 @@ export const updateComment = async (
   return dbReq;
 };
 
+// Delete Comment
 export const deleteComment = async (id: string): Promise<IComment> => {
   let db = await connect();
   const Comment = await commentModel.findByIdAndDelete(id);
