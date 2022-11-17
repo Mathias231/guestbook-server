@@ -13,6 +13,31 @@ const connect = async () => {
   return db;
 };
 
+// Find User
+export const findUserAndCreateUser = async ({
+  username,
+  password,
+}: {
+  username: string;
+  password: string;
+}) => {
+  let db = await connect();
+
+  // Search for user
+  let search = await userModel.findOne({
+    username: username,
+  });
+
+  // If user doesn't exist, create user
+  if (search === null) {
+    console.log('True: ' + search);
+    createUser({ username, password });
+  }
+
+  console.log('User already exist. Returning False');
+  return false;
+};
+
 // Create User
 export const createUser = async ({
   username,
