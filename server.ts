@@ -1,7 +1,7 @@
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
-import connect, { createUser, findUserAndCreateUser } from './lib/db';
+import connect, { createUser, findUser } from './lib/db';
 import './middleware/passport';
 import userModel from './models/user.model';
 
@@ -42,15 +42,16 @@ app.get('/', (req, res) => {
   res.send('Express + TypeScript Server');
 });
 
-// Create user
-app.post('/register', (req, res) => {
+// Create User
+app.post('/register', async (req, res) => {
   const { username, password } = req.body;
-  console.log(username, password);
 
-  if (!findUserAndCreateUser({ username, password })) {
-    res.sendStatus(201);
-  } else {
+  // New (works)
+  if (await findUser({ username })) {
     res.sendStatus(226);
+  } else {
+    createUser({ username, password });
+    res.sendStatus(201);
   }
 });
 
@@ -66,8 +67,7 @@ app.post(
     failureMessage: true,
   }),
   function (req, res) {
-    console.log(req.body);
-    res.send('Successfully Authenticated ' + req.session);
+    res.send('Successfully Authenticated');
   },
 );
 
