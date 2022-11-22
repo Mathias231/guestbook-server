@@ -3,7 +3,6 @@ import session from 'express-session';
 import passport from 'passport';
 import connect, { createUser, findUser } from './lib/db';
 import './middleware/passport';
-import userModel from './models/user.model';
 
 var bodyParser = require('body-parser');
 var cors = require('cors');
