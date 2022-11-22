@@ -55,7 +55,7 @@ app.post('/register', async (req, res) => {
 });
 
 app.get('/loginError', (req, res) => {
-  res.send("User doesn't exist");
+  res.sendStatus(204);
 });
 
 app.post(
@@ -65,8 +65,9 @@ app.post(
     failureFlash: true,
     failureMessage: true,
   }),
-  function (req, res) {
-    res.send('Successfully Authenticated');
+  (req, res) => {
+    console.log('Succsessfully Authenticated');
+    res.sendStatus(202);
   },
 );
 
